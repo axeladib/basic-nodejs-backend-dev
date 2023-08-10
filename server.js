@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const productRoute = require("./routes/productRoute");
+const errorMiddleware = require("./middleware/errorMiddleware");
 
 const PORT = process.env.PORT || 3000;
 const MONGODB_URL = process.env.MONGO_URL;
@@ -10,6 +11,7 @@ const app = express();
 //intiate  middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(errorMiddleware);
 
 //intitiate routes
 app.use("/api/products", productRoute);
