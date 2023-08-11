@@ -7,11 +7,20 @@ const errorMiddleware = require("./middleware/errorMiddleware");
 const PORT = process.env.PORT || 3000;
 const MONGODB_URL = process.env.MONGO_URL;
 const app = express();
+const cors = require("cors");
+const FRONTEND_CONNECTION = process.env.FRONTEND_CONNECTION;
+
+//TODO: To allow only specific domain to access
+var corsOptions = {
+  origin: FRONTEND_CONNECTION,
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
 
 //intiate  middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(errorMiddleware);
+app.use(cors(corsOptions));
 
 //intitiate routes
 app.use("/api/products", productRoute);
