@@ -4,10 +4,7 @@ const mongoose = require("mongoose");
 const app = express();
 const cors = require("cors");
 //TODO: Import important requirement in tWILIO
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
 const messageRoutes = require("./routes/messageRoute")
-const client = require('twilio')(accountSid, authToken);
 
 //TODO: .env file encrytion
 const PORT = process.env.PORT || 3000;

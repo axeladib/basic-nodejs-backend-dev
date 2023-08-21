@@ -18,17 +18,32 @@ const errorHandler = (error) => {
 
 const senderNumber = +14155238886;
 const receiverNumber = +601129512295;
+const conversationSID = "CH2d35b007da1c4f5e9712ba4deb5b764d";
 
-//TODO: Send Message to the Client
-const createMessage = async (req, res) => {
+//TODO: Send Message From Server to the Client
+const createConverSation = async (req, res) => {
   try {
-    const message = await client.messages.create({
-      body: "I love you dear",
-      from: `whatsapp:${senderNumber}`,
-      to: `whatsapp:${receiverNumber}`,
-    });
-    console.log(message);
+    const serverToClient = await client.conversations.v1
+      .conversations(conversationSID)
+      .messages.create({ author: "system", body: "I love you" });
+    res.status(200).json({ serverToClient });
+
     res.status(200).json({ message: "Message sent successfully" });
+  } catch (error) {
+    const errors = errorHandler(error);
+    res.status(500).json({ errors });
+  }
+};
+
+const getMessage = async (req, res) => {
+  try {
+    const incomingMessage = req.body.body;
+    const getMessage = await client.conversations.v1
+      .conversations(conversationSID)
+      .messages(incomingMessage)
+      .fetch()
+      .then((message) => console.log(message.body));
+      res.status(200).json({getMessage})
   } catch (error) {
     const errors = errorHandler(error);
     res.status(500).json({ errors });
@@ -37,29 +52,4 @@ const createMessage = async (req, res) => {
 
 //TODO: Response to the incoming message
 
-const responseMessage = async(req,res)=>{
- try{
-  const incomingMessage = req.body.Body; // Extract incoming message content
-  const senderNumber = req.body.From; // Extract sender's phone number
-  const receiverNumber = req.body.To; // Extract receiver's phone number
-  console.log(senderNumber, receiverNumber, incomingMessage)
-  // Implement your logic to process the incoming message and generate a reply
-  const replyMessage = `You said: "${incomingMessage}"`;
-
-  // Send the reply message back to the sender
-  const message = await client.messages
-    .create({
-      from: `whatsapp:${senderNumber}`, // Replace with your Twilio WhatsApp Sandbox number
-      body: replyMessage,
-      to: `whatsapp:${receiverNumber}`,
-      statusCallback: "https://e42f-183-171-31-202.ngrok-free.app"
-    });
-    console.log(message);
-    res.status(200).json({ message: "Successfully response"})
- }catch(err) {
-  console.log(err.message)
-  res.status(500).json({ message: err.message})
- }
-}
-
-module.exports = { createMessage, responseMessage };
+module.exports = { createConverSation, getMessage };
